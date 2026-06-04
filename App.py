@@ -7,9 +7,10 @@ st.set_page_config(page_title="مدرب المقابلات الذكي", layout="
 # إعداد مفتاح Gemini من الخزنة
 if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    gemini-1.5-flashgemini-1.5-flash # هذا النموذج هو 
+    # تأكدي من وجود علامات التنصيص حول اسم الموديل
+    model = genai.GenerativeModel('gemini-1.5-flash')
 else:
-    st.error("لم يتم العثور على مفتاح API في الخزنة. يرجى إضافته في الإعدادات.")
+    st.error("خطأ: لم يتم العثور على المفتاح في الخزنة.")
     st.stop()
 
 st.title("🚀 منصة المحاكاة الذكية")
@@ -24,7 +25,7 @@ if job:
                 response = model.generate_content(f"اطرحي سؤال مقابلة لوظيفة {job} يركز على الجانب المهني والمالي.")
                 st.session_state['question'] = response.text
             except Exception as e:
-                st.error(f"خطأ في الاتصال بجوجل: {e}")
+                st.error(f"خطأ: {e}")
                 st.stop()
 
     st.subheader(f"سؤال المقابلة: {st.session_state.get('question', '')}")
