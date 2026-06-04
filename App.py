@@ -2,9 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 st.set_page_config(page_title="مدرب المهنة والمالية الذكي", layout="wide")
-
-client = OpenAI(api_key="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")
-
+client = OpenAI()
 st.title("🚀 منصة المحاكاة الذكية للمقابلات الوظيفية")
 
 with st.sidebar:
