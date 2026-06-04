@@ -2,38 +2,42 @@ import streamlit as st
 import google.generativeai as genai
 
 # إعداد واجهة الموقع
-st.set_page_config(page_title="مدرب المقابلات الذكي", layout="wide")
+st.set_page_config(page_title="مدرب المهنة والمالية الذكي", layout="centered")
 
-# إعداد مفتاح Gemini من الخزنة
-if "GOOGLE_API_KEY" in st.secrets:
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    # تأكدي من وجود علامات التنصيص حول اسم الموديل
-    model = genai.GenerativeModel('gemini-2.5-flash')
+# إعداد Gemini
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-2.5-flash')
+
+st.title("🚀 منصة المحاكاة الذكية للمقابلات الوظيفية")
+
+# إعدادات الوظيفة في المنتصف
+job = st.text_input("الوظيفة المستهدفة:")
+
+# زر لتوليد أسئلة متعددة
+if job:
+    if st.button("توليد سؤال جديد"):
+        with st.spinner('جاري تحضير سؤال احترافي...'):
+            q_prompt = f"اطرحي سؤال مقابلة وظيفية واحد ومميز لوظيفة {job}. لا تضعي مقدمات."
+            response = model.generate_content(q_prompt)
+            st.session_state['question'] = response.text
+            st.rerun()
+
+    # عرض السؤال والإجابة
+    if 'question' in st.session_state:
+        st.subheader(f"سؤال المقابلة: {st.session_state['question']}")
+        user_answer = st.text_area("أجيبي على السؤال هنا:")
+
+        if st.button("تحليل الإجابة بذكاء"):
+            with st.spinner('المحاور الذكي يحلل إجابتك...'):
+                # تعديل البرومبت ليطلب الاختصار والتركيز على القوة والضعف
+                prompt = f"أنتِ خبيرة توظيف. الطالبة تتقدم لوظيفة {job}. السؤال: {st.session_state['question']}. إجابتها: {user_answer}. حللي الإجابة تقنياً ومالياً وقدمي التحليل في نقاط مختصرة جداً: نقاط القوة، نقاط الضعف، ونصيحة واحدة للتحسين. لا تكتبي مقدمات."
+                response = model.generate_content(prompt)
+                st.write("### 📊 التقييم المهني والمالي:")
+                st.info(response.text)
+                st.balloons()
 else:
-    st.error("خطأ: لم يتم العثور على المفتاح في الخزنة.")
-    st.stop()
-
-st.title("🚀 منصة المحاكاة الذكية")
+    st.info("الرجاء إدخال اسم الوظيفة للبدء.")
 
 with st.sidebar:
-    job = st.text_input("الوظيفة المستهدفة:")
-
-if job:
-    if 'question' not in st.session_state:
-        with st.spinner('جاري توليد سؤالك...'):
-            try:
-                response = model.generate_content(f"اطرحي سؤال مقابلة لوظيفة {job} يركز على الجانب المهني والمالي.")
-                st.session_state['question'] = response.text
-            except Exception as e:
-                st.error(f"خطأ: {e}")
-                st.stop()
-
-    st.subheader(f"سؤال المقابلة: {st.session_state.get('question', '')}")
-    user_answer = st.text_area("أجيبي على السؤال:")
-
-    if st.button("تحليل الإجابة"):
-        with st.spinner('جاري التحليل...'):
-            prompt = f"حللي إجابة الطالبة للوظيفة {job}: {user_answer}"
-            analysis = model.generate_content(prompt)
-            st.info(analysis.text)
-            st.balloons()
+    st.write("---")
+    st.write("تطوير: ليان هاني")
