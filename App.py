@@ -7,7 +7,7 @@ st.set_page_config(page_title="مدرب المقابلات الذكي", layout="
 # إعداد مفتاح Gemini من الخزنة
 if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-flash') # هذا النموذج هو الأكثر استقراراً
+    model = genai.GenerativeModel('gemini-1.0-pro') # هذا النموذج هو 
 else:
     st.error("لم يتم العثور على مفتاح API في الخزنة. يرجى إضافته في الإعدادات.")
     st.stop()
