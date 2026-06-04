@@ -1,4 +1,13 @@
 [theme]
+# استبدلي سطر العنوان القديم بهذا التنسيق:
+
+st.markdown("""
+    <div style="background-color: #f2e9e4; padding: 15px; border-radius: 10px; border-bottom: 3px solid #d68e7b;">
+        <h1 style="color: #5d4037; text-align: center; margin: 0;">🚀 منصة مساري المهني</h1>
+    </div>
+    <br>
+    """, unsafe_allow_html=True)
+
 primaryColor = "#d68e7b"
 backgroundColor = "#fdfaf6"
 secondaryBackgroundColor = "#f2e9e4"
