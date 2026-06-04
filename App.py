@@ -13,7 +13,7 @@ if 'selected_job' not in st.session_state:
 
 # --- الصفحة الرئيسية (بوابة الوظائف) ---
 if st.session_state['selected_job'] is None:
-    st.title("🚀 مرحباً بكِ في منصة المحاكاة الذكية")
+    st.title(" مرحباً بكِ في منصة المحاكاة الذكية")
     st.write("اختاري وظيفتك من القائمة أدناه أو أدخليها يدوياً للبدء:")
     
     # شبكة المربعات (الوظائف الشائعة)
@@ -36,9 +36,9 @@ if st.session_state['selected_job'] is None:
 # --- صفحة المحادثة (بعد اختيار الوظيفة) ---
 else:
     job = st.session_state['selected_job']
-    st.title(f"💼 محاكاة مقابلة لـ: {job}")
+    st.title(f" محاكاة مقابلة لـ: {job}")
     
-    if st.button("⬅️ عودة لاختيار وظيفة أخرى"):
+    if st.button("عودة لاختيار وظيفة أخرى"):
         st.session_state['selected_job'] = None
         st.session_state.pop('question', None)
         st.rerun()
