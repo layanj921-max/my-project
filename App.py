@@ -1,8 +1,11 @@
 import streamlit as st
-from openai import OpenAI
+import google.generativeai as genai
 
 st.set_page_config(page_title="مدرب المهنة والمالية الذكي", layout="wide")
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-pro')
+
 st.title("🚀 منصة المحاكاة الذكية للمقابلات الوظيفية")
 
 with st.sidebar:
@@ -16,11 +19,8 @@ with st.sidebar:
 if 'question' not in st.session_state and job:
     with st.spinner('جاري تحضير سؤال احترافي يناسب وظيفتك...'):
         q_prompt = f"اطرحي سؤال مقابلة وظيفية واحد ومميز لوظيفة {job} يركز على الجانب المهني والمالي. لا تضعي مقدمات، فقط اطرحي السؤال."
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": q_prompt}]
-        )
-        st.session_state['question'] = response.choices[0].message.content
+        response = model.generate_content(q_prompt)
+        st.session_state['question'] = response.text
 
 if 'question' in st.session_state:
     st.subheader(f"سؤال المقابلة: {st.session_state['question']}")
@@ -29,12 +29,9 @@ if 'question' in st.session_state:
     if st.button("تحليل الإجابة بذكاء"):
         with st.spinner('المحاور الذكي يحلل إجابتك...'):
             prompt = f"أنتِ خبيرة توظيف. الطالبة تتقدم لوظيفة {job}. السؤال هو: {st.session_state['question']}. إجابتها هي: {user_answer}. حللي الإجابة تقنياً ومالياً وقدمي نصائح دقيقة للتحسين."
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}]
-            )
+            response = model.generate_content(prompt)
             st.write("### 📊 التقييم المهني والمالي:")
-            st.info(response.choices[0].message.content)
+            st.info(response.text)
             st.balloons()
 else:
     st.info("الرجاء إدخال اسم الوظيفة في القائمة الجانبية للبدء.")
