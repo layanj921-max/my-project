@@ -8,7 +8,7 @@ st.set_page_config(page_title="مدرب المقابلات الذكي", layout="
 if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     # تأكدي من وجود علامات التنصيص حول اسم الموديل
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 else:
     st.error("خطأ: لم يتم العثور على المفتاح في الخزنة.")
     st.stop()
