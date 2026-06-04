@@ -1,57 +1,58 @@
 import streamlit as st
 import google.generativeai as genai
 
-st.set_page_config(page_title="منصة المحاكاة الذكية", layout="wide")
+st.set_page_config(page_title="مسار", layout="wide")
 
-# إعداد الموديل
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-# تهيئة الحالة لنقل المعلومات بين الصفحات
-if 'selected_job' not in st.session_state:
-    st.session_state['selected_job'] = None
+if 'selected_job' not in st.session_state: st.session_state['selected_job'] = None
 
-# --- الصفحة الرئيسية (بوابة الوظائف) ---
 if st.session_state['selected_job'] is None:
-    st.title(" مرحباً بكِ في منصة المحاكاة الذكية")
-    st.write("اختاري وظيفتك من القائمة أدناه أو أدخليها يدوياً للبدء:")
+    st.title(" منصة مسار")
+    st.write("اختاري مسارك المهني أو حللي مهاراتك:")
     
-    # شبكة المربعات (الوظائف الشائعة)
-    cols = st.columns(4)
-    jobs = ["مهندس", "طيار", "طبيب جراح", "مبرمج"]
+    col_a, col_b = st.columns(2)
     
-    for i, job in enumerate(jobs):
-        if cols[i % 4].button(job, use_container_width=True):
-            st.session_state['selected_job'] = job
-            st.rerun()
+    with col_a:
+        st.subheader("اختيار وظيفة للتدريب")
+        jobs = ["مهندس", "طيار", "طبيب جراح", "مبرمج"]
+        for job in jobs:
+            if st.button(job, use_container_width=True):
+                st.session_state['selected_job'] = job
+                st.rerun()
+        
+        custom_job = st.text_input("أو اكتبي وظيفة مخصصة:")
+        if st.button("بدء محاكاة الوظيفة"):
+            if custom_job:
+                st.session_state['selected_job'] = custom_job
+                st.rerun()
 
-    # خيار الوظيفة المخصصة
-    st.write("---")
-    custom_job = st.text_input("أو اكتبي وظيفتك الخاصة هنا:")
-    if st.button("بدء المحاكاة للوظيفة المكتوبة"):
-        if custom_job:
-            st.session_state['selected_job'] = custom_job
-            st.rerun()
+    with col_b:
+        st.subheader(" مستشار المهارات والرواتب")
+        skills = st.text_area("أدخلي مهاراتك (مثلاً: البرمجة، الإنجليزية، إدارة الوقت...):")
+        if st.button("تحليل المهارات واقتراح وظيفة وراتب"):
+            with st.spinner('جاري تحليل السوق والرواتب...'):
+                prompt = f"بناءً على المهارات التالية: {skills}. اقترحي 3 وظائف مناسبة، مع تقدير للراتب لكل منها، ونصيحة تربية مالية واحدة للادخار."
+                response = model.generate_content(prompt)
+                st.info(response.text)
 
-# --- صفحة المحادثة (بعد اختيار الوظيفة) ---
 else:
     job = st.session_state['selected_job']
     st.title(f" محاكاة مقابلة لـ: {job}")
     
-    if st.button("عودة لاختيار وظيفة أخرى"):
+    if st.button(" عودة"):
         st.session_state['selected_job'] = None
-        st.session_state.pop('question', None)
         st.rerun()
 
     if st.button("توليد سؤال مقابلة"):
-        with st.spinner('جاري التحضير...'):
-            res = model.generate_content(f"اطرحي سؤال مقابلة لوظيفة {job}")
-            st.session_state['question'] = res.text
-            st.rerun()
+        res = model.generate_content(f"اطرحي سؤال مقابلة لوظيفة {job}")
+        st.session_state['question'] = res.text
+        st.rerun()
 
     if 'question' in st.session_state:
-        st.info(st.session_state['question'])
+        st.warning(f"سؤالك: {st.session_state['question']}")
         answer = st.text_area("أجيبي هنا:")
-        if st.button("تحليل الإجابة"):
-            analysis = model.generate_content(f"حللي إجابة: {answer} لوظيفة {job}")
-            st.success(analysis.text)
+        if st.button("تحليل الإجابة مالياً ومهنياً"):
+            res = model.generate_content(f"لوظيفة {job}، السؤال: {st.session_state['question']}، الإجابة: {answer}. حللي الأداء وقدمي نصيحة مالية تخص هذه الوظيفة.")
+            st.success(res.text)
