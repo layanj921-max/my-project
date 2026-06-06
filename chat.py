@@ -1,5 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
+from PIL import Image
+import io
 
 st.set_page_config(page_title="Arabi-Q", layout="centered")
 
@@ -64,37 +66,75 @@ with st.sidebar:
 
 # الواجهة الرئيسية
 st.markdown("<h1 style='color: #00D1FF;'>Arabi-Q: The AI Bridge</h1>", unsafe_allow_html=True)
-st.info("Welcome! Enter any text from Arabic school curricula to have it translated and explained in English with academic precision.")
+st.info("Welcome! Enter any text, or upload an image/PDF from Arabic school curricula to have it translated and explained with academic precision.")
 
 # إعدادات المحرك والـ API
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 try:
-    # تصحيح المسافات (Indentation) هنا لتعمل بشكل صحيح داخل الـ try
     model = genai.GenerativeModel('gemini-2.5-flash')    
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # عرض المحادثة السابقة
+    # خيار رفع الملفات والصور أعلى المحادثة
+    uploaded_file = st.file_uploader("Upload an image or PDF of your curriculum", type=["png", "jpg", "jpeg", "pdf"])
+
+    # زر معالجة وترجمة الملف المرفوع
+    if uploaded_file is not None:
+        if st.button(" Translate Uploaded File"):
+            with st.spinner("Analyzing and translating your file..."):
+                file_type = uploaded_file.type
+                instruction = (
+                    "You are an expert academic translator specializing in school curricula. "
+                    "Analyze this uploaded document/image, extract the Arabic educational text, "
+                    "and translate it into accurate, professional English. "
+                    "Ensure scientific or mathematical terms are translated into their proper technical equivalents "
+                    "(not literal translations) and adapt symbols if needed. Provide a clear academic explanation."
+                )
+
+                # التحقق إذا كان المرفوع صورة
+                if "image" in file_type:
+                    image = Image.open(uploaded_file)
+                    # عرض الصورة للمستخدم للتأكيد
+                    st.image(image, caption="Uploaded Image", use_container_width=True)
+                    # إرسال الصورة مع البرومبت لـ Gemini
+                    response = model.generate_content([instruction, image])
+                
+                # التحقق إذا كان المرفوع ملف PDF
+                elif "pdf" in file_type:
+                    # قراءة محتوى الـ PDF كمصفوفة بايتات ليفهمها Gemini مباشرة
+                    pdf_data = uploaded_file.read()
+                    pdf_part = {
+                        "mime_type": "application/pdf",
+                        "data": pdf_data
+                    }
+                    # إرسال ملف الـ PDF مع البرومبت لـ Gemini
+                    response = model.generate_content([instruction, pdf_part])
+
+                # إضافة النتيجة إلى سجل المحادثة وعرضها
+                st.session_state.messages.append({"role": "user", "content": f"📝 [Uploaded File: {uploaded_file.name}]"})
+                st.session_state.messages.append({"role": "assistant", "content": response.text})
+
+    st.divider()
+
+    # عرض المحادثة السابقة (سواء نصوص أو ملفات مترجمة)
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # استقبال الأسئلة والمناهج
-    if prompt := st.chat_input("Enter educational text here to translate..."):
+    # استقبال النصوص العادية كالعادة
+    if prompt := st.chat_input("Or enter educational text here to translate..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            # تحسين الـ instruction ليركز على ترجمة المناهج والمصطلحات العلمية بدقة
             instruction = (
                 f"You are an expert academic translator specializing in school curricula. "
                 f"Translate the following Arabic educational text into accurate, professional English. "
                 f"Ensure scientific or mathematical terms are translated into their proper technical equivalents "
-                f"(not literal translations) and adapt symbols if needed (e.g., math variables). "
-                f"Here is the text:\n\n{prompt}"
+                f"(not literal translations) and adapt symbols if needed. Here is the text:\n\n{prompt}"
             )
             
             response = model.generate_content(instruction)
