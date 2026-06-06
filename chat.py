@@ -64,7 +64,7 @@ with st.sidebar:
 
 # الواجهة الرئيسية
 st.markdown("<h1 style='color: #00D1FF;'>Arabi-Q: The AI Bridge</h1>", unsafe_allow_html=True)
-st.info("مرحباً بك! أدخل أي نص من المناهج الدراسية العربية ليتم ترجمته وشرحه بالإنجليزية بدقة أكاديمية.")
+st.info("Welcome! Enter any text from Arabic school curricula to have it translated and explained in English with academic precision.")
 
 # إعدادات المحرك والـ API
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
@@ -82,7 +82,7 @@ try:
             st.markdown(msg["content"])
 
     # استقبال الأسئلة والمناهج
-    if prompt := st.chat_input("أدخل النص الدراسي هنا لترجمته..."):
+    if prompt := st.chat_input("Enter educational text here to translate..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
