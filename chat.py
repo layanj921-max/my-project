@@ -48,29 +48,31 @@ with st.sidebar:
     st.write("This AI-powered tutor helps bridge the gap between Arabic and English.")
     st.divider()
     
-    # معلوماتك
+    # معلومات الطالبة
     st.markdown("<p style='color: #A855F7; font-weight: bold;'>Student Name:</p>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 18px;'>Layan Hani</p>", unsafe_allow_html=True) 
     
     st.divider()
     
-    # معلومات المعلمة - يمكنك استبدالها بالاسم الحقيقي هنا
+    # معلومات المعلمة
     st.markdown("<p style='color: #A855F7; font-weight: bold;'>Supervised by:</p>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 18px;'>Ms. Khawlah Alsuraihi </p>", unsafe_allow_html=True) 
     
     st.divider()
-    st.write("📍 **Subject:** English Project")
-    st.write("✨ **Class:** 10th Grade")
+    st.write(" **Subject:** English Project")
+    st.write(" **Class:** 10th Grade")
 
-# 3. الواجهة الرئيسية
+# الواجهة الرئيسية
 st.markdown("<h1 style='color: #00D1FF;'>Arabi-Q: The AI Bridge</h1>", unsafe_allow_html=True)
-st.info("Welcome! Ask me to translate or explain any Arabic grammar rule!")
+st.info("مرحباً بك! أدخل أي نص من المناهج الدراسية العربية ليتم ترجمته وشرحه بالإنجليزية بدقة أكاديمية.")
 
-# 4. إعدادات المحرك والـ API
+# إعدادات المحرك والـ API
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 try:
-  model = genai.GenerativeModel('gemini-2.5-flash')    
+    # تصحيح المسافات (Indentation) هنا لتعمل بشكل صحيح داخل الـ try
+    model = genai.GenerativeModel('gemini-2.5-flash')    
+    
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
@@ -79,15 +81,22 @@ try:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # استقبال الأسئلة
-    if prompt := st.chat_input("Explain an Arabic rule..."):
+    # استقبال الأسئلة والمناهج
+    if prompt := st.chat_input("أدخل النص الدراسي هنا لترجمته..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            # تعليمات خاصة للبوت لضمان جودة الشرح التعليمي لزميلاتك
-            instruction = f"Context: You are an Arabic teacher helping English students. Explain this concept clearly: {prompt}"
+            # تحسين الـ instruction ليركز على ترجمة المناهج والمصطلحات العلمية بدقة
+            instruction = (
+                f"You are an expert academic translator specializing in school curricula. "
+                f"Translate the following Arabic educational text into accurate, professional English. "
+                f"Ensure scientific or mathematical terms are translated into their proper technical equivalents "
+                f"(not literal translations) and adapt symbols if needed (e.g., math variables). "
+                f"Here is the text:\n\n{prompt}"
+            )
+            
             response = model.generate_content(instruction)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
