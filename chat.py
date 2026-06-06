@@ -52,7 +52,7 @@ try:
     uploaded_file = st.file_uploader("Upload an image or PDF of your curriculum", type=["png", "jpg", "jpeg", "pdf"])
 
     if uploaded_file is not None:
-        if st.button("✨ Translate Uploaded File"):
+        if st.button(" Translate Uploaded File"):
             with st.spinner("Analyzing and translating your file..."):
                 file_type = uploaded_file.type
                 instruction = (
@@ -77,28 +77,25 @@ try:
 
     st.divider()
 
-    # --- عرض المحادثة مع إضافة أزرار النسخ والتحميل ---
+    # --- عرض المحادثة وتنظيم الأزرار بشكل صحيح وسليم ---
     for index, msg in enumerate(st.session_state.messages):
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
             
-            # نضيف أزرار التحكم فقط تحت إجابات الذكاء الاصطناعي (Assistant)
+            # التعديل هنا: يظهر الصندوق النظيف والزر السليم بدون أي تكرار أو أخطاء برمجية
             if msg["role"] == "assistant":
-                col1, col2 = st.columns(2)
+                st.write("📋 **Copy the text below:**")
+                st.code(msg["content"], language="markdown")
                 
-                with col1:
-                    # ميزة النسخ الذكية المدمجة في ستريمليت عبر st.copy_to_clipboard
-                    st.copy_to_clipboard(msg["content"], text="📋 Copy Explanation")
-                
-                with col2:
-                    # توليد الـ PDF وتحميله
-                    pdf_bytes = create_pdf(msg["content"])
-                    st.download_button(
-                        label="📥 Download as PDF",
-                        data=pdf_bytes,
-                        file_name=f"ArabiQ_Explanation_{index}.pdf",
-                        mime="application/pdf"
-                    )
+                # توليد الـ PDF وتحميله بشكل أنيق ومباشر
+                pdf_bytes = create_pdf(msg["content"])
+                st.download_button(
+                    label="📥 Download Explanation as PDF",
+                    data=pdf_bytes,
+                    file_name=f"ArabiQ_Explanation_{index}.pdf",
+                    mime="application/pdf",
+                    key=f"pdf_btn_{index}" # مفتاح فريد لكل زر لتجنب تداخل الأزرار
+                )
 
     # استقبال النصوص العادية
     if prompt := st.chat_input("Or enter educational text here to translate..."):
@@ -117,7 +114,7 @@ try:
             response = model.generate_content(instruction)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
-            st.rerun() # لإعادة تشغيل الصفحة فوراً وظهور أزرار النسخ والتحميل للإجابة الجديدة
+            st.rerun() 
 
 except Exception as e:
     st.error(f"Technical Hint: {e}")
