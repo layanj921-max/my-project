@@ -4,7 +4,7 @@ from PIL import Image
 from fpdf import FPDF
 import io
 
-st.set_page_config(page_title="Omni-Q", layout="centered")
+st.set_page_config(page_title="Global-Q", layout="centered")
 
 def create_pdf(text):
     pdf = FPDF()
@@ -28,7 +28,7 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown("<h1 style='text-align: center; color: #00D1FF;'> Omni-Q </h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #00D1FF;'> Global-Q </h1>", unsafe_allow_html=True)
     st.write("This AI-powered tutor helps bridge the gap between any language and English.")
     st.divider()
     st.markdown("<p style='color: #A855F7; font-weight: bold;'>Student Name:</p>", unsafe_allow_html=True)
@@ -40,7 +40,7 @@ with st.sidebar:
     st.write("**Subject:** English Project")
     st.write("**Class:** 10th Grade")
 
-st.markdown("<h1>Omni-Q: The Global AI Bridge</h1>", unsafe_allow_html=True)
+st.markdown("<h1>Global-Q : The Global AI Bridge</h1>", unsafe_allow_html=True)
 st.info("Welcome! Enter text, or upload an image/PDF from ANY school curriculum worldwide. I will translate it and explain it to you in professional, academic English!")
 
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
