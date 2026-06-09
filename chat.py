@@ -4,7 +4,7 @@ from PIL import Image
 from fpdf import FPDF
 import io
 
-st.set_page_config(page_title="Arabi-Q", layout="centered")
+st.set_page_config(page_title="Omni-Q", layout="centered")
 
 def create_pdf(text):
     pdf = FPDF()
