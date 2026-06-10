@@ -14,20 +14,29 @@ def create_pdf(text):
     return bytes(pdf_output)
 
 # تصميم الواجهة بالألوان الإسلامية الفخمة ودعم اللغة العربية من اليمين لليسار
+# تصميم الواجهة بالألوان الإسلامية الفخمة ودعم اللغة العربية وحل مشكلة الخط المتداخل
 st.markdown("""
     <style>
-    /* جعل الصفحة بأكملها تدعم الاتجاه من اليمين إلى اليسار */
+    /* جعل محتوى الصفحة الرئيسي يدعم الاتجاه من اليمين إلى اليسار بشكل آمن */
+    .block-container {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* ضبط نظام الألوان الكلي للتطبيق */
     .stApp { 
         background-color: #0B1F19; 
         color: #FFFFFF; 
-        direction: rtl; 
-        text-align: right; 
     }
     
-    /* ضبط القائمة الجانبية لتظهر بالاتجاه الصحيح */
+    /* تنسيق محتوى القائمة الجانبية ليدعم اليمين دون تخريب حركتها الأصلية */
+    [data-testid="stSidebarUserContent"] {
+        direction: rtl;
+        text-align: right;
+    }
+    
     [data-testid="stSidebar"] { 
         background-color: #071410; 
-        direction: rtl;
     }
     
     /* تنسيق العناوين والنصوص */
