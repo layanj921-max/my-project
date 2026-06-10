@@ -4,7 +4,6 @@ from fpdf import FPDF
 
 st.set_page_config(page_title="سِيَر | رواة وقصص الصحابة", layout="wide")
 
-# دالة توليد ملف الـ PDF المتوافقة والمصححة
 def create_pdf(text):
     pdf = FPDF()
     pdf.add_page()
@@ -14,7 +13,6 @@ def create_pdf(text):
     pdf_output = pdf.output(dest='S')
     return bytes(pdf_output)
 
-# تصميم الواجهة بالألوان الإسلامية الفخمة (الأخضر الزمردي والذهبي النيون)
 st.markdown("""
     <style>
     .stApp { background-color: #0B1F19; color: #FFFFFF; }
@@ -28,29 +26,27 @@ st.markdown("""
 
 # القائمة الجانبية الرسمية للمدرسة
 with st.sidebar:
-    st.markdown("<h1 style='color: #D4AF37;'>✨ مِشْكَاة السِّيَر</h1>", unsafe_allow_html=True)
-    st.write("منصة تفاعلية رقمية تحكي قصص وسير الصحابة الكرام وأدوارهم التاريخية بأسلوب روائي ممتع.")
+    st.markdown("<h1 style='color: #D4AF37;'>مِشْكَاة السِّيَر</h1>", unsafe_allow_html=True)
+    st.write("منصة تفاعلية رقمية تحكي قصص وسير الصحابة الكرام وأدوارهم التاريخية .")
     st.divider()
     st.markdown("<p style='color: #D4AF37; font-weight: bold;'>الطالبة:</p>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 18px;'>ليان هاني</p>", unsafe_allow_html=True) 
     st.divider()
     st.markdown("<p style='color: #D4AF37; font-weight: bold;'>بإشراف المعلمة:</p>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 18px;'>أ. خولة السريحي</p>", unsafe_allow_html=True) 
+    st.markdown("<p style='font-size: 18px;'>أ.رجاء عبدالله</p>", unsafe_allow_html=True) 
     st.divider()
     st.write("**المادة:** الحديث الشريف")
-    st.write("**الصف:** الصف العاشر (أول ثانوي)")
+    st.write("**الصف:** الاول ثانوي)")
 
-st.markdown("<h1>سِيَر: القصص التفاعلية للصحابة الكرام</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #A4C2B7;'>اخمري إحدى البطاقات الجاهزة أو ابحثي عن أي صحابي في الأسفل للاستماع إلى قصته الشيقة عبر الذكاء الاصطناعي</p>", unsafe_allow_html=True)
+st.markdown("<h1>سِيَر: قصص الصحابة الكرام</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #A4C2B7;'>انقري إحدى البطاقات الجاهزة أو ابحثي عن أي صحابي في الأسفل للاستماع إلى قصته الشيقة </p>", unsafe_allow_html=True)
 st.divider()
 
-# إعداد مفتاح الذكاء الاصطناعي
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 try:
     model = genai.GenerativeModel('gemini-2.5-flash')
 
-    # قائمة الصحابة الرئيسية المقترحة
     companions = [
         {"name": "أبو هريرة رضي الله عنه", "title": "حافظ الأمة", "id": "abu_hurairah"},
         {"name": "عائشة بنت أبي بكر رضي الله عنهما", "title": "فقيهة النساء", "id": "aisha"},
@@ -60,11 +56,9 @@ try:
         {"name": "أنس بن مالك رضي الله عنه", "title": "خادم الرسول ﷺ", "id": "anas"}
     ]
 
-    # تتبع الصحابي المستهدف في الـ Session State
     if "search_target" not in st.session_state:
         st.session_state.search_target = None
 
-    # عرض البطاقات الرئيسية الجاهزة
     rows = [companions[0:3], companions[3:6]]
     for row in rows:
         cols = st.columns(3)
@@ -76,17 +70,16 @@ try:
                     <p style='color: #A4C2B7; font-style: italic; margin-bottom: 15px;'>{companion['title']}</p>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button(f"📖 اقرأ قصته", key=companion['id'], use_container_width=True):
+                if st.button(f"اقرأ القصة", key=companion['id'], use_container_width=True):
                     st.session_state.search_target = companion['name']
 
     st.write("")
     st.divider()
     
-    # 🔍 ميزة البحث الحر عن أي صحابي آخر خارج الخيارات
-    st.markdown("### 🔍 ابحثي عن صحابي آخر:")
+    st.markdown("###  ابحثي عن صحابي آخر:")
     custom_name = st.text_input("اكتبي اسم أي صحابي أو صحابية هنا (مثال: سلمان الفارسي، خديجة بنت خويلد، بلال بن رباح...):")
     
-    if st.button("✨ توليد القصة للصحابي المكتوب", use_container_width=True):
+    if st.button(" توليد القصة للصحابي المكتوب", use_container_width=True):
         if custom_name.strip() != "":
             st.session_state.search_target = custom_name
         else:
@@ -95,10 +88,9 @@ try:
     # عرض قصة الصحابي المحدد ديناميكياً (سواء من البطاقات أو من البحث الحر)
     if st.session_state.search_target:
         st.divider()
-        st.markdown(f"### 📚 الرواية والقصة الكاملة لـ: {st.session_state.search_target}")
+        st.markdown(f"###  الرواية والقصة الكاملة لـ: {st.session_state.search_target}")
         
-        with st.spinner("جاري صياغة الأحداث والمواقف التاريخية بأسلوب روائي مشوق..."):
-            # صياغة Prompt قصصي وروائي بامتياز مع الحفاظ على دقة الحقائق التاريخية
+        with st.spinner("جاري صياغة الأحداث والمواقف التاريخية ..."):
             story_prompt = (
                 f"أنت راوٍ بارع ومؤرخ تاريخي إسلامي. احكِ قصة شيقة ومؤثرة وملهمة ومناسبة لطلاب الثانوية عن الصحابي: {st.session_state.search_target}.\n\n"
                 f"يجب أن تُصاغ القصة كـ رواية سردية متكاملة وممتعة تحتوي على:\n"
@@ -110,14 +102,12 @@ try:
             
             response = model.generate_content(story_prompt)
             
-            # عرض النتيجة داخل صندوق مخصص ومنسق
             st.markdown(f"<div class='stContentBlock'>{response.text}</div>", unsafe_allow_html=True)
             
             st.write("")
-            # تحويل القصة المولدة لـ PDF للتحميل والمطالعة
             pdf_bytes = create_pdf(response.text)
             st.download_button(
-                label=f"📥 تحميل قصة {st.session_state.search_target} كملف PDF",
+                label=f" تحميل قصة {st.session_state.search_target} كملف PDF",
                 data=pdf_bytes,
                 file_name=f"Story_{st.session_state.search_target}.pdf",
                 mime="application/pdf"
