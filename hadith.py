@@ -13,17 +13,59 @@ def create_pdf(text):
     pdf_output = pdf.output(dest='S')
     return bytes(pdf_output)
 
+# تصميم الواجهة بالألوان الإسلامية الفخمة ودعم اللغة العربية من اليمين لليسار
 st.markdown("""
     <style>
-    .stApp { background-color: #0B1F19; color: #FFFFFF; }
-    [data-testid="stSidebar"] { background-color: #071410; }
-    h1 { color: #D4AF37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); font-family: 'Segoe UI', sans-serif; text-align: center; }
-    h3 { color: #D4AF37; }
-    .stContentBlock { background-color: #113025; border: 1px solid #D4AF37; border-radius: 10px; padding: 20px; font-size: 16px; line-height: 1.8; }
-    .companion-card { background-color: #113025; border: 1px solid #23604A; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); min-height: 140px; display: flex; flex-direction: column; justify-content: center; }
+    /* جعل الصفحة بأكملها تدعم الاتجاه من اليمين إلى اليسار */
+    .stApp { 
+        background-color: #0B1F19; 
+        color: #FFFFFF; 
+        direction: rtl; 
+        text-align: right; 
+    }
+    
+    /* ضبط القائمة الجانبية لتظهر بالاتجاه الصحيح */
+    [data-testid="stSidebar"] { 
+        background-color: #071410; 
+        direction: rtl;
+    }
+    
+    /* تنسيق العناوين والنصوص */
+    h1 { 
+        color: #D4AF37; 
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); 
+        font-family: 'Segoe UI', sans-serif; 
+        text-align: center; 
+    }
+    h3 { 
+        color: #D4AF37; 
+        text-align: right;
+    }
+    
+    /* تنسيق صناديق المحتوى والبطاقات */
+    .stContentBlock { 
+        background-color: #113025; 
+        border: 1px solid #D4AF37; 
+        border-radius: 10px; 
+        padding: 20px; 
+        font-size: 16px; 
+        line-height: 1.8; 
+        text-align: right;
+    }
+    .companion-card { 
+        background-color: #113025; 
+        border: 1px solid #23604A; 
+        border-radius: 12px; 
+        padding: 20px; 
+        text-align: center; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
+        min-height: 140px; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+    }
     </style>
     """, unsafe_allow_html=True)
-
 # القائمة الجانبية الرسمية للمدرسة
 with st.sidebar:
     st.markdown("<h1 style='color: #D4AF37;'>مِشْكَاة السِّيَر</h1>", unsafe_allow_html=True)
@@ -36,7 +78,7 @@ with st.sidebar:
     st.markdown("<p style='font-size: 18px;'>أ.رجاء عبدالله</p>", unsafe_allow_html=True) 
     st.divider()
     st.write("**المادة:** الحديث الشريف")
-    st.write("**الصف:** الاول ثانوي)")
+    st.write("**الصف:** الاول ثانوي")
 
 st.markdown("<h1>سِيَر: قصص الصحابة الكرام</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #A4C2B7;'>انقري إحدى البطاقات الجاهزة أو ابحثي عن أي صحابي في الأسفل للاستماع إلى قصته الشيقة </p>", unsafe_allow_html=True)
